@@ -17,17 +17,19 @@ public class EncryptorTest {
     public void encrypt() throws IOException {
         File file = temporaryFolder.newFile("input");
         Files.write(file.toPath(), "Chesherskej".getBytes());
-        Encryptor encryptor = new Encryptor(new String[]{"-c", "54656c74", file.getAbsolutePath()});
-        Assert.assertArrayEquals(new byte[]{0x17, 0x20, 0xd, 0x20, 0x9, 0x20, 0x7, 0x20, 0x3c, 0x20, 0x0, 0x20, 0x1e, 0x20, 0x7, 0x20, 0x3f, 0x20, 0, 0x20, 0x6, 0x20},
-                Files.readAllBytes(new File(encryptor.fname).toPath()));
+        Encryptor encryptor = new Encryptor(file.getAbsolutePath(), file.getAbsolutePath() + ".cry", "54656c74");
+        encryptor.crypt();
+        Assert.assertArrayEquals(new byte[]{0x17, 0xd, 0x9, 0x7, 0x3c, 0x0, 0x1e, 0x7, 0x3f, 0, 0x6},
+                Files.readAllBytes(new File(file.getAbsolutePath() + ".cry").toPath()));
     }
 
     @Test
     public void decrypt() throws IOException {
         File file = temporaryFolder.newFile("input");
-        Files.write(file.toPath(), new byte[]{0x17, 0x20, 0xd, 0x20, 0x9, 0x20, 0x7, 0x20, 0x3c, 0x20, 0x0, 0x20, 0x1e, 0x20, 0x7, 0x20, 0x3f, 0x20, 0, 0x20, 0x6, 0x20});
-        Encryptor encryptor = new Encryptor(new String[]{"-d", "54656c74", file.getAbsolutePath()});
+        Files.write(file.toPath(), new byte[]{0x17, 0xd, 0x9, 0x7, 0x3c, 0x0, 0x1e, 0x7, 0x3f, 0, 0x6});
+        Encryptor encryptor = new Encryptor(file.getAbsolutePath(), file.getAbsolutePath() + ".cry", "54656c74");
+        encryptor.crypt();
         Assert.assertArrayEquals("Chesherskej".getBytes(),
-                Files.readAllBytes(new File(encryptor.fname).toPath()));
+                Files.readAllBytes(new File(file.getAbsolutePath() + ".cry").toPath()));
     }
 }
